@@ -1,9 +1,17 @@
-import { useState } from "react";
+import { FormEvent, useState } from "react";
+import startWipe from "../Wipe"
 
 function Setup() {
 
+    const [token, setToken] = useState("");
+
+    function onSubmit(e: FormEvent){
+        e.preventDefault();
+        startWipe(token, "3");
+    }
+
     return (
-        <form>
+        <form onSubmit={onSubmit}>
             <fieldset>
                 <legend>Setup</legend>
                 <p>All information is stored locally.</p>
