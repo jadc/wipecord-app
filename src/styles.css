@@ -13,3 +13,10 @@
     -moz-osx-font-smoothing: grayscale;
     -webkit-text-size-adjust: 100%;
 }
+
+.saved-account > span {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    background-color: grey;
+}

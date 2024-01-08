@@ -1,11 +1,14 @@
 import { useState, Fragment } from "react";
-import "./App.css";
 
-import Setup from "./Setup"
-import Log from "./Log"
+import Accounts from "./accounts-page/Accounts"
+import Setup from "./main-page/Setup"
+import Log from "./main-page/Log"
 
 function App() {
-    const [test, setTest] = useState("");
+    // TODO: set to last used token from localStorage
+    const [token, setToken] = useState("");
+
+    if(!token) return (<Accounts setToken={setToken}/>);
 
     return (
         <Fragment>
