@@ -1,10 +1,11 @@
 import { useState, useEffect, FormEvent, Fragment } from "react";
-import SavedAccount from "./SavedAccount";
 
 const ACCOUNTS_KEY: string = "accounts"
 
 type Account = {
-    name: string
+    name: string,
+    avatar?: string,
+    token: string
 }
 
 function Accounts(props: {setToken: React.Dispatch<React.SetStateAction<string>>}) {
@@ -12,6 +13,7 @@ function Accounts(props: {setToken: React.Dispatch<React.SetStateAction<string>>
     const [accounts, setAccounts] = useState<Array<Account>>([])
 
     // Load accounts from storage
+    // TODO: this doesn't work
     useEffect(() => {
         let a: string | null = localStorage.getItem(ACCOUNTS_KEY)
         if(a != null) setAccounts(JSON.parse(a))
@@ -23,14 +25,18 @@ function Accounts(props: {setToken: React.Dispatch<React.SetStateAction<string>>
         localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(accounts))
     }, [accounts]);
 
-    function onSubmit(e: FormEvent){
-        e.preventDefault();
-        props.setToken("yes");
+    // TODO: account adding modal
+    function addAccount(account: Account){
+        setAccounts(prev => [...prev, account]);
     }
 
-    function addAccount(){
-        const test: Account = {name: "hi"}
-        setAccounts(prev => [...prev, test]);
+    function selectAccount(account: Account){
+        console.log("Select " + account.name)
+    }
+
+    function removeAccount(account: Account){
+        console.log("Delete " + account.name)
+        setAccounts(accounts.filter(x => x.name !== account.name));
     }
 
     return (
@@ -40,8 +46,18 @@ function Accounts(props: {setToken: React.Dispatch<React.SetStateAction<string>>
             </header>
             <main>
                 <ul>
-                    {accounts && accounts.map(x => <SavedAccount key={x.name} name={x.name}></SavedAccount>)}
-                    <li onClick={addAccount}>Add an account</li>
+                    {accounts && accounts.map(x => 
+                        <Fragment>
+                            <div className="saved-account">
+                                <span onClick={() => selectAccount(x)}>
+                                    <img src={x.avatar} alt="Avatar"/>
+                                    <p>@{x.name}</p>
+                                </span>
+                                <button onClick={() => removeAccount(x)}>&times;</button>
+                            </div>
+                        </Fragment>
+                    )}
+                    <li onClick={() => {addAccount({name: "hi", token: "2"})}}>Add an account</li> 
                 </ul>
             </main>
         </Fragment>
