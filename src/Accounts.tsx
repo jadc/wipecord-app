@@ -1,8 +1,10 @@
-import { useState, useEffect, FormEvent, Fragment } from "react";
+import { FormEvent, useState, useEffect, useRef, Fragment } from "react";
+import { fetchUser } from "./API"
 
 const ACCOUNTS_KEY: string = "accounts"
 
 type Account = {
+    id: string,
     name: string,
     avatar?: string,
     token: string
@@ -10,6 +12,9 @@ type Account = {
 
 function Accounts(props: {setToken: React.Dispatch<React.SetStateAction<string>>}) {
 
+    const modalRef = useRef<HTMLDialogElement>(null)
+
+    // TODO: put this as usecontext to access outside login page
     const [accounts, setAccounts] = useState<Array<Account>>([])
 
     // Load accounts from storage
@@ -25,9 +30,23 @@ function Accounts(props: {setToken: React.Dispatch<React.SetStateAction<string>>
         localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(accounts))
     }, [accounts]);
 
-    // TODO: account adding modal
-    function addAccount(account: Account){
-        setAccounts(prev => [...prev, account]);
+    async function addAccount(e: FormEvent){
+        if( e.target instanceof HTMLFormElement ){
+            const data = new FormData(e.target);
+
+            // Get user data from token
+            const token = data.get("token") as string
+            const req = await fetchUser(token)
+            console.log(req)
+
+            const newAccount: Account = {
+                id: req["id"],
+                name: req["username"], 
+                token: token,
+                avatar: `https://cdn.discordapp.com/avatars/${req["id"]}/${req["avatar"]}`
+            }
+            setAccounts(prev => [...prev, newAccount]);
+        }
     }
 
     function selectAccount(account: Account){
@@ -57,8 +76,23 @@ function Accounts(props: {setToken: React.Dispatch<React.SetStateAction<string>>
                             </div>
                         </Fragment>
                     )}
-                    <li onClick={() => {addAccount({name: "hi", token: "2"})}}>Add an account</li> 
                 </ul>
+                <button onClick={() => modalRef.current?.showModal()}>Add an account</button> 
+                
+                <dialog ref={modalRef} onSubmit={addAccount}>
+                    <form method="dialog">
+                        <fieldset>
+                            <legend>Login</legend>
+                            <p>All information is stored locally.</p>
+                            <p>
+                                <label htmlFor="token">Token</label>
+                                <input name="token" id="token" required/>
+                            </p>
+                            <button type="submit">Login</button>
+                            <button type="button" onClick={() => modalRef.current?.close()}>Cancel</button>
+                        </fieldset>
+                    </form>
+                </dialog>
             </main>
         </Fragment>
     );
