@@ -1,8 +1,8 @@
 import { useState, Fragment } from "react";
 
-import Accounts from "./accounts-page/Accounts"
-import Setup from "./main-page/Setup"
-import Log from "./main-page/Log"
+import Accounts from "./Accounts"
+import Setup from "./Setup"
+import Log from "./Log"
 
 function App() {
     // TODO: set to last used token from localStorage

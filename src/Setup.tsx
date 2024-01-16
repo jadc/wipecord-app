@@ -1,5 +1,5 @@
 import { FormEvent, useState } from "react";
-import startWipe from "../Wipe"
+import startWipe from "./API"
 
 function Setup() {
 
